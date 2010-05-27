@@ -1,0 +1,45 @@
+#include "bib/tipos.h"
+#include <stdlib.h>
+
+fila entra(fila f, pessoa p)
+{
+	fila novo, aux;
+
+	novo = malloc(sizeof(no));
+	novo->p = p;
+	novo->prox = NULL;
+
+	if(f != NULL)
+	{
+		aux = f;
+
+		while(aux->prox != NULL)
+			aux = aux->prox;
+
+		aux->prox = novo;
+
+		return f; 
+	}
+
+	else
+		return novo;
+}
+
+pessoa sai(fila *f)
+{
+	fila aux;
+	pessoa ret;
+
+	aux = *f;
+
+	if(aux == NULL) return ret;
+
+	ret = aux->p;
+	aux = aux->prox;
+
+	free(*f);
+
+	*f = aux;
+
+	return ret;
+}

@@ -1,0 +1,173 @@
+#include "bib/tipos.h"
+#include "bib/mar.h"
+#include "bib/desloc.h"
+#include <time.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#define VMIN 2
+
+celula **iniciaMar(int l_max, int c_max)
+{
+ int linha, coluna;
+ celula **mar;
+
+	if( (mar = malloc(l_max*sizeof(struct cll))) == NULL)
+	{
+		printf("Memoria indisponivel\n");
+		exit(-1);
+	}
+
+	for( linha = 0; linha < l_max; linha++)
+		for( coluna = 0; coluna < c_max ; coluna++)
+      		{
+			if( (mar[linha] = malloc(c_max*sizeof(struct cll))) == NULL)
+			{
+				printf("Memoria indisponivel\n");
+				exit(-1);
+			}
+		}
+	/* Coloca agua('a') em todas as celulas do mar. */	
+	for( linha = 0; linha < l_max; linha++)
+		for( coluna = 0; coluna < c_max ; coluna++)
+		{
+			mar[linha][coluna].categoria = 'a';
+			mar[linha][coluna].f = malloc(sizeof(fila));
+			mar[linha][coluna].f = NULL;
+		}
+ return mar;
+}
+
+/*
+  recebe um ponteiro para o mar, e as dimensão l_max (linha maxima) e c_max (coluna maxima)
+*/
+void atualizaMar(celula **mar, int l_max, int c_max)
+{
+	int linha,coluna;
+  	pessoa aux, pe1, pe2; 
+
+  	for(linha = 0; linha < l_max; linha++)
+    	{
+		for(coluna = 0; coluna < c_max; coluna++)
+		{
+      			if(mar[linha][coluna].categoria == 'p')
+        			mar[linha][coluna].f->p.atualizada = 0;
+		}
+	}
+    /*movimentacao das pessoas sem realizar as colisoes*/
+  	for(linha = 0; linha < l_max; linha++)
+    	{
+		for(coluna = 0; coluna < c_max; coluna++)
+		{
+      			if(mar[linha][coluna].categoria == 'p' && !mar[linha][coluna].f->p.atualizada)
+			{
+				/*aux = malloc(sizeof(pessoa)); N sei se isso vai ser usado, mas o sizeof
+				if(aux == NULL) exit(-1);       deve ter o tamanho da struct pss */
+				aux = sai(mar[linha][coluna].f);
+        mar[linha][coluna].categoria = 'a';
+				markov(&aux);
+				aux.atualizada = 1;
+				mar[(int) aux.pos.x][(int) aux.pos.y].f = entra(mar[(int) aux.pos.x][(int) aux.pos.y].f, aux);
+        mar[(int) aux.pos.x][(int) aux.pos.y].categoria = 'p';
+      			}
+		}
+	}
+
+  /*Agora vemos quem colidiu com quem*/
+  for(linha = 0; linha < l_max; linha++)
+    for(coluna = 0; coluna < c_max; coluna++)
+      while(quantidade(mar[linha][coluna].f) > 1){
+        pe1 = sai(mar[linha][coluna].f);
+        pe2 = sai(mar[linha][coluna].f);
+
+        colide(&pe1, &pe2);
+        
+        mar[(int) pe1.pos.x][(int) pe1.pos.y].f = entra(mar[(int) pe1.pos.x][(int) pe1.pos.y].f, pe1);
+        mar[(int) pe1.pos.x][(int) pe1.pos.y].categoria = 'p';
+
+        mar[(int) pe2.pos.x][(int) pe2.pos.y].f = entra(mar[(int) pe2.pos.x][(int) pe2.pos.y].f, pe2);
+        mar[(int) pe2.pos.x][(int) pe2.pos.y].categoria = 'p';
+      }
+}
+
+
+
+
+void imprimeMar(celula **mar, int l_max, int c_max)
+{
+/*
+   Considera-se para impressao:
+   agua 'a' = .
+   pessoa 'p' = O
+   recife 'r' = #
+*/
+ int linha, coluna;
+ char tipo;
+
+ 	for( linha = 0; linha < l_max; linha++)
+	{
+		for( coluna = 0; coluna < c_max ; coluna++)
+		{
+			tipo = mar[linha][coluna].categoria;
+			
+			if( tipo == 'a' )
+				printf(".");
+
+			else if( tipo == 'p')	
+				printf("O");
+
+			else	
+				printf("#");	/* Comentar essa linha caso nao tiver recifes */
+		}
+		printf("\n");
+	}
+}
+
+
+/*Substituicao sera uma variavel mneumonica para sabermos se sera criado uma pessoa em alguma borda para substituir
+outra pessoa q tenha saido do mapa do mar.*/
+
+celula ** gera_pessoas(celula ** mar, int num_pessoas, int substituicao)
+{
+	int cont;
+	srand(time(NULL));
+	for(cont = 0; cont < num_pessoas; cont++)
+	{
+		while(1)
+		{
+
+			pessoa p;
+			p.vel.x = rand()%3 + VMIN; /* Velocidades irao de 2 a 4 quadrados/frame */
+			p.vel.y = rand()%3 + VMIN;
+			srand(time(NULL));
+			p.pos.x = rand()%30;
+			p.pos.y = rand()%120;
+			p.atualizada = 0;
+
+			if(substituicao == 1)
+			{
+				while(1)
+				{
+					if((p.pos.x == 119 || p.pos.x == 0 || p.pos.y == 0 || p.pos.y == 29))
+						break;
+
+					srand(time(NULL));
+					p.pos.x = rand()%30;
+					p.pos.y = rand()%120;
+				}
+			}
+			
+
+			if(mar[(int)p.pos.x][(int)p.pos.y].categoria == 'a')
+			{
+				mar[(int)p.pos.x][(int)p.pos.y].categoria = 'p';
+				mar[(int)p.pos.x][(int)p.pos.y].f = entra(mar[(int)p.pos.x][(int)p.pos.y].f, p);
+				break;
+			}
+		}
+
+	}
+	
+	return mar;
+
+}

@@ -1,0 +1,173 @@
+#include "bib/tipos.h"
+#include "bib/desloc.h"
+#include <math.h>
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+
+/*M_PI nao e padrao ansi*/
+
+#ifndef M_PI
+#define M_PI 3.141592653589793238462643
+#endif
+
+#define VMIN 2
+
+#define L 0
+#define NE 1
+#define N 2
+#define NO 3
+#define O 4
+#define SO 5
+#define S 6
+#define SE 7
+
+int direcao(int x, int y)
+{
+	double ang;
+
+	/*printf("Verificando dir de (%d,%d)\n", x, y);*/
+
+	ang = atan2(y,x);
+
+	if(ang < 0) ang+=2*M_PI;
+  
+	ang*=180/M_PI;
+
+	if(ang >= 337.5 && ang < 22.5)
+		return L;
+	else if(ang >= 22.5 && ang < 67.5 )
+		return NE;
+	else if(ang >= 67.5 && ang < 112.5)
+		return N;
+	else if(ang >= 112.5 && ang < 157.5)
+		return NO;
+	else if(ang >= 157.5 && ang < 202.5)
+    		return O;
+	else if(ang >= 202.5 && ang < 247.5)
+		return SO;
+	else if(ang >= 247.5 && ang < 292.5)
+    		return S;
+	else if(ang >= 292.5 && ang < 337.5)
+		return SE;
+	
+
+  	return -1;
+}
+
+
+/* gera uma "matriz de cadeia de markov" (adapatada para trabalhar bem com a funcao rand)
+   atualiza a pessoa de acordo com a cadeia, MAS NÃO O MAR */
+
+double modulo(vetor v)
+{
+	/*int qx, qy;
+
+	printf("Modulo de (%d,%d)\n", v.x, v.y);
+
+	printf("qx: %d\n", qx = (v.x*v.x));
+	printf("qy: %d\n", qy = (v.y*v.y));*/
+	return sqrt((v.x*v.x) + (v.y*v.y));
+}
+
+void markov(pessoa *p)
+{
+
+	int mkv[8];
+	double vel;
+	int i, sort, dir;
+
+	dir = direcao(p->vel.x, p->vel.y);
+	printf("dir: %d\n", dir);
+	vel = modulo(p->vel);
+	printf("vel: %f\n", vel);
+
+	for(i = 0; i < 8; i++)
+		if(i == dir) 
+			mkv[i] = 65;
+
+    	else if(i > dir) 
+		mkv[i] = 65 + (i)*5;
+
+    	else if(i < dir) 
+		mkv[i] = 65 + (i + 1)*5;
+
+	for(i = 0; i < 8; i++) 
+		printf("%d ", mkv[i]); 
+
+	srand(time(NULL));
+	sort = rand() % 100;
+  	printf("Sorteado: %d\n", sort);
+
+  	if(sort >= 65)
+		for(i = 0; i < 8; i++)
+		{
+		      	if(i != dir)
+			{
+				if(sort < mkv[i])
+				{
+					dir = i; i = 8; 
+				}
+			}
+		}
+
+  	printf("Nova dir: %d\n", dir);
+
+  	switch(dir)
+	{
+    	case L:
+      		printf("Atualizando para L\n");
+      		p->vel.x = (int) vel;
+      		p->vel.y = 0;
+      		p->pos.x += (int) vel;
+      		break;
+    	case NE:
+      		printf("Atualizando para NE\n");
+      		p->vel.x = vel*cos(M_PI/4);
+      		p->vel.y = vel*sin(M_PI/4);
+      		p->pos.x += (int) vel*cos(M_PI/4);
+      		p->pos.y += (int) vel*sin(M_PI/4);
+      		break;
+    	case N:
+      		printf("Atualizando para N\n");
+      		p->vel.x = 0;
+      		p->vel.y = vel;
+      		p->pos.y += (int) vel;
+      		break;
+    	case NO:
+      		printf("Atualizando para NO\n");
+      		p->vel.x = vel*cos(M_PI/4)*(-1);
+      		p->vel.y = vel*sin(M_PI/4);
+      		p->pos.x += (int) vel*cos(M_PI/4)*(-1);
+      		p->pos.y += (int) vel*sin(M_PI/4);
+      		break;
+    	case O:
+      		printf("Atualizando para O\n");
+      		p->vel.x = vel*(-1);
+      		p->vel.y = 0;
+      		p->pos.x += (int) vel*(-1);
+      		break;
+    	case SO:
+      		printf("Atualizando para SO\n");
+      		p->vel.x = vel*cos(M_PI/4)*(-1);
+      		p->vel.y = vel*sin(M_PI/4)*(-1);
+      		p->pos.x += (int) vel*cos(M_PI/4)*(-1);
+      		p->pos.y += (int) vel*sin(M_PI/4)*(-1);
+     		break;
+    	case S:
+      		printf("Atualizando para S\n");
+      		p->vel.x = 0;
+      		p->vel.y = vel*(-1);
+      		p->pos.y += (int) vel*(-1);
+      		break;
+    	case SE:
+      		printf("Atualizando para SE\n");
+      		p->vel.x = vel*cos(M_PI/4);
+      		p->vel.y = vel*sin(M_PI/4)*(-1);
+      		p->pos.x += (int) vel*cos(M_PI/4);
+      		p->pos.y += (int) vel*sin(M_PI/4)*(-1);
+      		break;
+  	}
+
+}

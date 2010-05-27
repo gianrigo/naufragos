@@ -15,3 +15,14 @@ A funcao atualizaMar foi reformulada para se adaptar as refatoracoes e a nova fo
 Foi criada a funcao movePessoa no arquivo de mar. Esta funcao nada mais e que um trecho de codigo que era repetido tres vezes na funcao atualizaMar.
 
 O arquivo tipos.c foi extinto. 
+
+-----------------
+| Gian - 27/05 |
+-----------------
+Fim da variável substituicao em geraPessoas.
+
+Alteração nas funções que utilizavam c_max e l_max. 
+
+Tentativas iniciais de colidir o bote com a borda( o bote está piscando).
+
+Criação do ideias.txt para postar coisas que faltam fazer e ideias para simplificar coisas já existentes e afins.

@@ -38,11 +38,11 @@ fila atualizaMar(fila naufragos, int l_max, int c_max, double deltaT)
 					/*Se for 0 eh o topo. 1 eh o chao. 2 eh a parede esquerda e 3 eh a parede direita.*/
 					if( (proximo->p.pos.y - proximo->p.raio) < 0)
 						colideComBorda(&proximo->p, 0, 768, 1024);				
-					else if( (proximo->p.pos.y + proximo->p.raio) > c_max)
+					else if( (proximo->p.pos.y + proximo->p.raio) > l_max)
 						colideComBorda(&proximo->p, 1, 768, 1024);
 					else if( (proximo->p.pos.x - proximo->p.raio) < 0)
 						colideComBorda(&proximo->p, 2, 768, 1024);
-					else if( (proximo->p.pos.x + proximo->p.raio) > l_max )
+					else if( (proximo->p.pos.x + proximo->p.raio) > c_max )
 						colideComBorda(&proximo->p, 3, 768, 1024);
 				}
 				
@@ -91,8 +91,8 @@ void imprimeMar(fila naufragos)
 /*Substituicao sera uma variavel mneumonica para sabermos se sera criado uma pessoa em alguma borda para substituir
 outra pessoa q tenha saido do mapa do mar.*/
 
-fila geraPessoas(fila naufragos, int numPessoas, int substituicao, int l_max, int c_max)
-{/*Substituicao eh necessario??? */
+fila geraPessoas(fila naufragos, int numPessoas, int l_max, int c_max)
+{
 	int cont;
 	item p;
 
@@ -100,8 +100,8 @@ fila geraPessoas(fila naufragos, int numPessoas, int substituicao, int l_max, in
 	{
 			p.vel.x = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
 			p.vel.y = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
-			p.pos.x = rand()%l_max;
-			p.pos.y = rand()%c_max;
+			p.pos.x = rand()%c_max;
+			p.pos.y = rand()%l_max;
 			p.atualizada = 0;
 			p.raio = 5;
 			p.categoria = 'p';
@@ -118,8 +118,8 @@ fila geraAsimov(fila naufragos, int l_max, int c_max)
 
 	asimov.vel.x = 0;
 	asimov.vel.y = 0;
-	asimov.pos.x = rand()%l_max;
-	asimov.pos.y = rand()%c_max;
+	asimov.pos.x = rand()%c_max;
+	asimov.pos.y = rand()%l_max;
 	asimov.atualizada = 0;
 	asimov.raio = 80;
 	asimov.categoria = 'a';
@@ -127,8 +127,6 @@ fila geraAsimov(fila naufragos, int l_max, int c_max)
 	naufragos = entra(naufragos, asimov);
 
 	return naufragos;
-
-
 
 }
 
@@ -142,8 +140,8 @@ fila geraRecifes(fila naufragos, int numRecifes, int l_max, int c_max)
 	{
 			r.vel.x = 0;
 			r.vel.y = 0;
-			r.pos.x = rand()%l_max;
-			r.pos.y = rand()%c_max;
+			r.pos.x = rand()%c_max;
+			r.pos.y = rand()%l_max;
 			r.atualizada = 0;
 			r.raio = 19;
 			r.categoria = 'r';
@@ -160,8 +158,8 @@ fila geraBotes(fila naufragos, int l_max, int c_max)
 
 		b1.vel.x = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
 		b1.vel.y = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
-		b1.pos.x = rand()%l_max;
-		b1.pos.y = rand()%c_max;
+		b1.pos.x = rand()%c_max;
+		b1.pos.y = rand()%l_max;
 		b1.atualizada = 0;
 		b1.raio = 52;
 		b1.categoria = '1';
@@ -170,8 +168,8 @@ fila geraBotes(fila naufragos, int l_max, int c_max)
 
 		b2.vel.x = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
 		b2.vel.y = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
-		b2.pos.x = rand()%l_max;
-		b2.pos.y = rand()%c_max;
+		b2.pos.x = rand()%c_max;
+		b2.pos.y = rand()%l_max;
 		b2.atualizada = 0;
 		b2.raio = 52;
 		b2.categoria = '2';

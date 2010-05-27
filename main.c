@@ -38,10 +38,10 @@ int main(int argc, char *argv[])
 
 	set_palette(desktop_palette);
 
-	naufragos = geraPessoas(naufragos, 40, 0, 1024, 768);
-	naufragos = geraRecifes(naufragos, 10, 1024, 768);
-	naufragos = geraBotes(naufragos, 1024, 768);
-	naufragos = geraAsimov(naufragos, 1024, 768);
+	naufragos = geraPessoas(naufragos, 40, 768, 1024);
+	naufragos = geraRecifes(naufragos, 10, 768, 1024);
+	naufragos = geraBotes(naufragos, 768, 1024);
+	naufragos = geraAsimov(naufragos, 768, 1024);
 
 	imprimeMar(naufragos);
 	
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
                 {  
                         deltaT = (double)var/(double)CLOCKS_PER_SEC; 
       
-			                  naufragos = atualizaMar(naufragos, 1024, 768, deltaT);
+			                  naufragos = atualizaMar(naufragos, 768, 1024, deltaT);
 			                  imprimeMar(naufragos);
                         anterior = clock();
                 } 

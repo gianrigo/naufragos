@@ -215,35 +215,44 @@ void colideComBorda( item *p, int borda, int l_max, int c_max)
 {
  int novaBorda;
 
+ /* 0  -- borda superior
+    1  -- borda inferior
+    2  -- borda esquerda
+    3  -- borda direita. */
+
 	if( p->categoria == 'p')
 	{
-
-		while( (novaBorda = rand()%4) == borda);/*Sorteia uma borda ate que ela seja diferente da atual*/
+		/* Sorteia uma borda ate que ela seja diferente da atual */
+		while( (novaBorda = rand()%4) == borda);
 
 		switch(novaBorda)
 		{
 			case 0:
 				p->pos.x = p->raio + 20;
-				p->pos.y = rand()%c_max;
+				p->pos.y = rand()%l_max;
 				break;
 			case 1:
-				p->pos.x = l_max - p->raio - 20;
-				p->pos.y = rand()%c_max;
+				p->pos.x = c_max - p->raio - 20;
+				p->pos.y = rand()%l_max;
 				break;
 			case 2:
-				p->pos.x = rand()%l_max;
+				p->pos.x = rand()%c_max;
 				p->pos.y = p->raio + 20;
 				break;
 			case 3:
-				p->pos.x = rand()%l_max;
-				p->pos.y = c_max - p->raio - 20;
+				p->pos.x = rand()%c_max;
+				p->pos.y = l_max - p->raio - 20;
 				break;
 		}
 	}
 
-	if( p->categoria == '1' || p->categoria == '2' )
+	else if( p->categoria == '1' || p->categoria == '2' )
 	{
-		printf("Falta implementar\n");		
+		/*if( borda == 0 || borda == 1 )
+			p->pos.x = c_max - p->pos.x;
 
+		else 
+			p->pos.y = l_max - p->pos.y;
+		*/
 	}
 }

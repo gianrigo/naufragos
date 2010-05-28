@@ -251,9 +251,11 @@ void colide(item *p1, item *p2, double deltaT)
 
 	movePessoa(p1,deltaT);
 	movePessoa(p2,deltaT);
-	
+
+	if(distancia(p1->pos, p2->pos) > 5){
 	  p1->atualizada = 1;
 	  p2->atualizada = 1;
+  }
   
 }
 

@@ -14,6 +14,11 @@
 #define LARANJA  makecol(255,60,0)
 #define VERDE makecol(60,179,113)
 
+#define R_PESS 5
+#define R_BOTE 21
+#define R_ASIMOV 80
+#define R_RECIFE 21
+
 fila atualizaMar(fila naufragos, int l_max, int c_max, double deltaT)
 {
 	fila proximo = naufragos;
@@ -29,12 +34,7 @@ fila atualizaMar(fila naufragos, int l_max, int c_max, double deltaT)
 		{
 			if(!proximo->p.atualizada){
 				markov(&proximo->p,deltaT);
-
-
-				if(!proximo->p.atualizada)
-				{
-					markov(&proximo->p,deltaT);
-
+        proximo->p.atualizada = 1;
 					/*Se for 0 eh o topo. 1 eh o chao. 2 eh a parede esquerda e 3 eh a parede direita.*/
 					if( (proximo->p.pos.y - proximo->p.raio) < 0)
 						colideComBorda(&proximo->p, 0, 768, 1024);				
@@ -43,9 +43,7 @@ fila atualizaMar(fila naufragos, int l_max, int c_max, double deltaT)
 					else if( (proximo->p.pos.x - proximo->p.raio) < 0)
 						colideComBorda(&proximo->p, 2, 768, 1024);
 					else if( (proximo->p.pos.x + proximo->p.raio) > c_max )
-						colideComBorda(&proximo->p, 3, 768, 1024);
-				}
-				
+						colideComBorda(&proximo->p, 3, 768, 1024);		
 			}
 			proximo = proximo -> prox;
 		}
@@ -68,16 +66,16 @@ void imprimeMar(fila naufragos)
 		else if( proximo->p.categoria == 'r' )	
 			rectfill(buffer, (proximo->p.pos.x)-15,(proximo->p.pos.y)+15,(proximo->p.pos.x)+15,(proximo->p.pos.y)-15, MARROM);/*risco de seg fault*/
 		else if( proximo->p.categoria == 'a')
-			rectfill(buffer, (proximo->p.pos.x)-150, (proximo->p.pos.y) +60, (proximo->p.pos.x)+150, (proximo->p.pos.y) - 60, VERDE);
+			rectfill(buffer, (proximo->p.pos.x)-100, (proximo->p.pos.y) +50, (proximo->p.pos.x)+100, (proximo->p.pos.y) - 50, VERDE);
 
 		else if( proximo->p.categoria == '1' )
 		{
-			triangle(buffer, (proximo->p.pos.x)-30, (proximo->p.pos.y)-33, (proximo->p.pos.x), (proximo->p.pos.y)+33, (proximo->p.pos.x)+30, (proximo->p.pos.y)-33,LARANJA);/*risco de seg fault*/		
+			triangle(buffer, (proximo->p.pos.x)-15, (proximo->p.pos.y)-17, (proximo->p.pos.x), (proximo->p.pos.y)+17, (proximo->p.pos.x)+15, (proximo->p.pos.y)-17,LARANJA);/*risco de seg fault*/		
 		}
 
 		else if( proximo->p.categoria == '2' )
 		{
-			triangle(buffer, (proximo->p.pos.x)-30, (proximo->p.pos.y)-33, (proximo->p.pos.x), (proximo->p.pos.y)+33, (proximo->p.pos.x)+30, (proximo->p.pos.y)-33,BRANCO);/*risco de seg fault*/		
+			triangle(buffer, (proximo->p.pos.x)-15, (proximo->p.pos.y)-17, (proximo->p.pos.x), (proximo->p.pos.y)+17, (proximo->p.pos.x)+15, (proximo->p.pos.y)-17,BRANCO);/*risco de seg fault*/		
 		}
 	}
 	
@@ -103,7 +101,7 @@ fila geraPessoas(fila naufragos, int numPessoas, int l_max, int c_max)
 			p.pos.x = rand()%c_max;
 			p.pos.y = rand()%l_max;
 			p.atualizada = 0;
-			p.raio = 5;
+			p.raio = R_PESS;
 			p.categoria = 'p';
 
 			naufragos = entra(naufragos, p);
@@ -121,7 +119,7 @@ fila geraAsimov(fila naufragos, int l_max, int c_max)
 	asimov.pos.x = rand()%c_max;
 	asimov.pos.y = rand()%l_max;
 	asimov.atualizada = 0;
-	asimov.raio = 80;
+	asimov.raio = R_ASIMOV;
 	asimov.categoria = 'a';
 
 	naufragos = entra(naufragos, asimov);
@@ -143,7 +141,7 @@ fila geraRecifes(fila naufragos, int numRecifes, int l_max, int c_max)
 			r.pos.x = rand()%c_max;
 			r.pos.y = rand()%l_max;
 			r.atualizada = 0;
-			r.raio = 19;
+			r.raio = R_RECIFE;
 			r.categoria = 'r';
 
 			naufragos = entra(naufragos, r);
@@ -161,7 +159,7 @@ fila geraBotes(fila naufragos, int l_max, int c_max)
 		b1.pos.x = rand()%c_max;
 		b1.pos.y = rand()%l_max;
 		b1.atualizada = 0;
-		b1.raio = 52;
+		b1.raio = R_BOTE;
 		b1.categoria = '1';
 
 		naufragos = entra(naufragos, b1);
@@ -171,7 +169,7 @@ fila geraBotes(fila naufragos, int l_max, int c_max)
 		b2.pos.x = rand()%c_max;
 		b2.pos.y = rand()%l_max;
 		b2.atualizada = 0;
-		b2.raio = 52;
+		b2.raio = R_BOTE;
 		b2.categoria = '2';
 
 		naufragos = entra(naufragos, b2);

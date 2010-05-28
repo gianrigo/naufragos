@@ -1,4 +1,5 @@
 int direcao(int x, int y);
+double angulo(double x, double y);
 double modulo(vetor v);
 void markov(item *p, double deltaT);
 
@@ -8,8 +9,8 @@ void markov(item *p, double deltaT);
 #define M_PI 3.141592653589793238462643
 #endif
 
-#define VMIN 150
-#define VMAX 200
+#define VMIN 75
+#define VMAX 150
 
 #define L 0
 #define NE 1

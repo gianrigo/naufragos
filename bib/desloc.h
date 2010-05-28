@@ -9,8 +9,8 @@ void markov(item *p, double deltaT);
 #define M_PI 3.141592653589793238462643
 #endif
 
-#define VMIN 150
-#define VMAX 200
+#define VMIN 35
+#define VMAX 70
 
 #define L 0
 #define NE 1

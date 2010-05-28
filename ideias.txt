@@ -5,3 +5,7 @@ Assimov ser um triângulo, para melhorar a colisão, considerando que será a ci
 Não imprimir o mar antes de começar a contar o tempo, assim se algum item, que se movimenta, estiver na mesma posição que outro será feita a colisão correspondente.(não resolve para o caso de recifes que são gerados em cima de outros ou em cima do Assimov. 
 
 Fazer a "ponta" do bote apontar para a direção que ele esta indo, facilitará quando tivermos que movimentar o bote com o teclado.
+
+Bibliotecas desnecessárias.
+
+Código aparentemente repetido em angulo e direcao, no desloc.c

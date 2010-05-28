@@ -26,3 +26,11 @@ Alteração nas funções que utilizavam c_max e l_max.
 Tentativas iniciais de colidir o bote com a borda( o bote está piscando).
 
 Criação do ideias.txt para postar coisas que faltam fazer e ideias para simplificar coisas já existentes e afins.
+
+-----------------
+| Gian - 28/05 |
+-----------------
+
+Bote colide com a borda(quica).
+
+Círculos vermelhos em torno dos botes para facilitar a visualização dos raios dos corais, botes, Asimov. Para desabilitar basta comentar a linha indicada no começo de mar.c 

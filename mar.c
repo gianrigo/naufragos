@@ -3,9 +3,17 @@
 #include "bib/desloc.h"
 #include "bib/colisao.h"
 #include <time.h>
+#include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <allegro.h>
+
+#define VERCOLISOES /*Se nao quizer mais ver os circulos comentar essa linha*/
+#ifdef VERCOLISOES
+  #define	COLISAO  circle(buffer, proximo->p.pos.x,proximo->p.pos.y ,proximo->p.raio, VERMELHO);
+#else
+  #define	COLISAO		
+#endif
 
 #define AZUL  makecol(65,105,255)
 #define PRETO  makecol(0,0,0)
@@ -13,6 +21,7 @@
 #define MARROM  makecol(139,69,19)
 #define LARANJA  makecol(255,60,0)
 #define VERDE makecol(60,179,113)
+#define VERMELHO makecol(255,0,0)
 
 #define R_PESS 5
 #define R_BOTE 21
@@ -54,6 +63,7 @@ void imprimeMar(fila naufragos)
 {
 	fila proximo;
 	BITMAP *buffer;
+	double ang;
 
 	buffer = create_bitmap(screen->w, screen->h);
   
@@ -63,19 +73,28 @@ void imprimeMar(fila naufragos)
 	{
 		if( proximo->p.categoria == 'p' )	
 			circlefill(buffer, proximo->p.pos.x,proximo->p.pos.y ,proximo->p.raio, PRETO);                          
-		else if( proximo->p.categoria == 'r' )	
+		else if( proximo->p.categoria == 'r' )
+		{	
 			rectfill(buffer, (proximo->p.pos.x)-15,(proximo->p.pos.y)+15,(proximo->p.pos.x)+15,(proximo->p.pos.y)-15, MARROM);/*risco de seg fault*/
+			COLISAO	
+		}
 		else if( proximo->p.categoria == 'a')
+		{
 			rectfill(buffer, (proximo->p.pos.x)-100, (proximo->p.pos.y) +50, (proximo->p.pos.x)+100, (proximo->p.pos.y) - 50, VERDE);
-
+			COLISAO	
+		}
 		else if( proximo->p.categoria == '1' )
 		{
-			triangle(buffer, (proximo->p.pos.x)-15, (proximo->p.pos.y)-17, (proximo->p.pos.x), (proximo->p.pos.y)+17, (proximo->p.pos.x)+15, (proximo->p.pos.y)-17,LARANJA);/*risco de seg fault*/		
+			ang = atan2(proximo->p.vel.y,proximo->p.vel.x);
+
+			triangle(buffer, (proximo->p.pos.x-15), (proximo->p.pos.y-17), (proximo->p.pos.x)/*+proximo->p.raio*cos(ang)*/, (proximo->p.pos.y+17)/*+proximo->p.raio*sin(ang)*/, (proximo->p.pos.x+15), (proximo->p.pos.y-17),LARANJA);/* Tentativas de rotacionar o bote */
+			COLISAO		
 		}
 
 		else if( proximo->p.categoria == '2' )
 		{
-			triangle(buffer, (proximo->p.pos.x)-15, (proximo->p.pos.y)-17, (proximo->p.pos.x), (proximo->p.pos.y)+17, (proximo->p.pos.x)+15, (proximo->p.pos.y)-17,BRANCO);/*risco de seg fault*/		
+			triangle(buffer, (proximo->p.pos.x)-15, (proximo->p.pos.y)-17, (proximo->p.pos.x), (proximo->p.pos.y)+17, (proximo->p.pos.x)+15, (proximo->p.pos.y)-17,BRANCO);/*risco de seg fault*/
+			COLISAO			
 		}
 	}
 	

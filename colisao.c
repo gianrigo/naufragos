@@ -268,6 +268,7 @@ void colideComBorda( item *p, int borda, int l_max, int c_max)
     2  -- borda esquerda
     3  -- borda direita. */
 
+	/* Pessoa sai pela borda */
 	if( p->categoria == 'p')
 	{
 		/* Sorteia uma borda ate que ela seja diferente da atual */
@@ -294,13 +295,27 @@ void colideComBorda( item *p, int borda, int l_max, int c_max)
 		}
 	}
 
+	/* Bote colide com a borda */
 	else if( p->categoria == '1' || p->categoria == '2' )
 	{
-		/*if( borda == 0 || borda == 1 )
-			p->pos.x = c_max - p->pos.x;
-
-		else 
-			p->pos.y = l_max - p->pos.y;
-		*/
+		switch(borda)
+		{
+			case 0:
+				p->vel.y *= -1;
+				p->pos.y += p->raio;
+				break;
+			case 1:
+				p->vel.y *= -1;
+				p->pos.y -= p->raio;
+				break;
+			case 2:
+				p->vel.x *= -1;
+				p->pos.x += p->raio;
+				break;
+			case 3:
+				p->vel.x *= -1;
+				p->pos.x -= p->raio;
+				break;
+		}			
 	}
 }

@@ -31,14 +31,14 @@ fila detectaColisao(fila pessoas, double deltaT)
 
 					if(max_dist >= distancia(principal->p.pos, aux->p.pos))
           {
-                if((principal->p.categoria == '1' || principal->p.categoria == '2') && aux->p.categoria == 'r'){
+                if((principal->p.categoria == '1' || principal->p.categoria == '2') && (aux->p.categoria == 'r' || aux->p.categoria == 'a')){
                   colideCoral(aux->p, &principal->p, deltaT);
                 }else if(principal->p.categoria == '1' && aux->p.categoria == '2'){
                   colide(&principal->p, &aux->p, deltaT);
                   principal->p.atualizada = aux->p.atualizada = 0;
                 }else if((principal->p.categoria == '1' || principal->p.categoria == '2') && aux->p.categoria == 'p'){
                   pessoas = aux = principal = recolhePessoa(pessoas, aux);
-                }else if(principal->p.categoria == 'r' && aux->p.categoria == 'p'){
+                }else if((principal->p.categoria == 'r' || principal->p.categoria == 'a') && aux->p.categoria == 'p'){
                   colideCoral(principal->p, &aux->p, deltaT);
                 }else if(principal->p.categoria == 'p' && aux->p.categoria == 'p'){
 					        colide(&principal->p, &aux->p, deltaT);

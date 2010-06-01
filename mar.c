@@ -23,10 +23,11 @@
 #define VERDE makecol(60,179,113)
 #define VERMELHO makecol(255,0,0)
 
+#define D 400 /* Parece mto maior do que deveria ser, 10 */ 
 #define R_PESS 5
 #define R_BOTE 21
 #define R_ASIMOV 80
-#define R_RECIFE 21
+
 
 fila atualizaMar(fila naufragos, int l_max, int c_max, double deltaT)
 {
@@ -75,12 +76,12 @@ void imprimeMar(fila naufragos)
 			circlefill(buffer, proximo->p.pos.x,proximo->p.pos.y ,proximo->p.raio, PRETO);                          
 		else if( proximo->p.categoria == 'r' )
 		{	
-			rectfill(buffer, (proximo->p.pos.x)-15,(proximo->p.pos.y)+15,(proximo->p.pos.x)+15,(proximo->p.pos.y)-15, MARROM);/*risco de seg fault*/
+			rectfill(buffer, (proximo->p.pos.x)-proximo->p.raio/sqrt(2),(proximo->p.pos.y)+proximo->p.raio/sqrt(2),(proximo->p.pos.x)+proximo->p.raio/sqrt(2),(proximo->p.pos.y)-proximo->p.raio/sqrt(2), MARROM);/*risco de seg fault*/
 			COLISAO	
 		}
 		else if( proximo->p.categoria == 'a')
 		{
-			rectfill(buffer, (proximo->p.pos.x)-100, (proximo->p.pos.y) +50, (proximo->p.pos.x)+100, (proximo->p.pos.y) - 50, VERDE);
+			rectfill(buffer, (proximo->p.pos.x)-100, (proximo->p.pos.y)+50, (proximo->p.pos.x)+100, (proximo->p.pos.y) - 50, VERDE);
 			COLISAO	
 		}
 		else if( proximo->p.categoria == '1' )
@@ -150,20 +151,30 @@ fila geraAsimov(fila naufragos, int l_max, int c_max)
 
 fila geraRecifes(fila naufragos, int numRecifes, int l_max, int c_max)
 {
-	int cont;
+	int cont, decideTam, raioMedio;
 	item r;
+
+	raioMedio = sqrt(2*D)/2;
 
 	for(cont = 0; cont < numRecifes; cont++)
 	{
-			r.vel.x = 0;
-			r.vel.y = 0;
-			r.pos.x = rand()%c_max;
-			r.pos.y = rand()%l_max;
-			r.atualizada = 0;
-			r.raio = R_RECIFE;
-			r.categoria = 'r';
+		r.vel.x = 0;
+		r.vel.y = 0;
+		r.pos.x = rand()%c_max;
+		r.pos.y = rand()%l_max;
+		r.atualizada = 0;
+		r.categoria = 'r';
 
-			naufragos = entra(naufragos, r);
+		decideTam = rand()%3; 
+		if( decideTam == 0 ) 	 /* RECIFES MEDIOS */
+			r.raio = raioMedio;
+		else if( decideTam == 1) /* RECIFES PEQUENOS */
+			while( (r.raio = rand()%raioMedio) < 5 ); /* Garante que o raio não sera 0 ou muito pequeno */
+		else			 /* RECIFES GRANDES */
+			r.raio = raioMedio + rand()%raioMedio;/* No maximo será do dobro do tamanho do medio */
+								
+
+		naufragos = entra(naufragos, r);
 	}
 	
 	return naufragos;
@@ -173,26 +184,25 @@ fila geraBotes(fila naufragos, int l_max, int c_max)
 {
 	item b1,b2;
 
-		b1.vel.x = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
-		b1.vel.y = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
-		b1.pos.x = rand()%c_max;
-		b1.pos.y = rand()%l_max;
-		b1.atualizada = 0;
-		b1.raio = R_BOTE;
-		b1.categoria = '1';
+	b1.vel.x = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
+	b1.vel.y = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
+	b1.pos.x = rand()%c_max;
+	b1.pos.y = rand()%l_max;
+	b1.atualizada = 0;
+	b1.raio = R_BOTE;
+	b1.categoria = '1';
 
-		naufragos = entra(naufragos, b1);
+	naufragos = entra(naufragos, b1);
 
-		b2.vel.x = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
-		b2.vel.y = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
-		b2.pos.x = rand()%c_max;
-		b2.pos.y = rand()%l_max;
-		b2.atualizada = 0;
-		b2.raio = R_BOTE;
-		b2.categoria = '2';
+	b2.vel.x = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
+	b2.vel.y = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
+	b2.pos.x = rand()%c_max;
+	b2.pos.y = rand()%l_max;
+	b2.atualizada = 0;
+	b2.raio = R_BOTE;
+	b2.categoria = '2';
 
-		naufragos = entra(naufragos, b2);
-
+	naufragos = entra(naufragos, b2);
 
 	return naufragos;
 }

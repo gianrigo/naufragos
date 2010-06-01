@@ -184,20 +184,14 @@ fila geraBotes(fila naufragos, int l_max, int c_max)
 {
 	item b1,b2;
 
-	b1.vel.x = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
-	b1.vel.y = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
-	b1.pos.x = rand()%c_max;
-	b1.pos.y = rand()%l_max;
+	boteBorda(&b1,l_max,c_max);
 	b1.atualizada = 0;
 	b1.raio = R_BOTE;
 	b1.categoria = '1';
 
 	naufragos = entra(naufragos, b1);
 
-	b2.vel.x = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
-	b2.vel.y = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
-	b2.pos.x = rand()%c_max;
-	b2.pos.y = rand()%l_max;
+	boteBorda(&b2,l_max,c_max);
 	b2.atualizada = 0;
 	b2.raio = R_BOTE;
 	b2.categoria = '2';
@@ -206,6 +200,35 @@ fila geraBotes(fila naufragos, int l_max, int c_max)
 
 	return naufragos;
 }
+
+void boteBorda(item *bote, int l_max, int c_max)
+{
+
+	bote->vel.x = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
+	bote->vel.y = (rand()%(int)((VMAX + 1 - VMIN))) + VMIN;
+
+
+	switch( rand()%4 )
+	{
+		case 0: /* Canto superior esquerdo */
+			bote->pos.x = bote->raio;
+			bote->pos.y = bote->raio;
+			break;
+		case 1:  /* Canto superior direito */
+			bote->pos.x = c_max - bote->raio;
+			bote->pos.y = bote->raio;
+			break;
+		case 2: /* Canto inferior direito */
+			bote->pos.x = c_max - bote->raio;
+			bote->pos.y = l_max - bote->raio;
+			break;
+		case 3: /* Canto inferior esquerdo */
+			bote->pos.x = bote->raio;
+			bote->pos.y = l_max - bote->raio;
+			break;
+	}
+}
+
 
 void liberaMar(fila naufragos)
 {

@@ -1,6 +1,7 @@
 #include "bib/tipos.h"
 #include "bib/colisao.h"
 #include "bib/desloc.h"
+#include "bib/mar.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -31,7 +32,16 @@ fila detectaColisao(fila pessoas, double deltaT)
 
 					if(max_dist >= distancia(principal->p.pos, aux->p.pos))
           {
-                if((principal->p.categoria == '1' || principal->p.categoria == '2') && (aux->p.categoria == 'r' || aux->p.categoria == 'a')){
+                if((principal->p.categoria == '1' || principal->p.categoria == '2') && (aux->p.categoria == 'r')){
+	
+		/* Encalha com 66% de chance */
+		if( rand()%3 < 2 )
+			boteBorda(&principal->p, 768, 1024);/* Setamos 1024x768, caso o tamanho mude é necessário mudar aqui tambem */
+		/* Colide elasticamente */
+		else
+                  colideCoral(aux->p, &principal->p, deltaT);
+                }
+		else if((principal->p.categoria == '1' || principal->p.categoria == '2') && (aux->p.categoria == 'a')){
                   colideCoral(aux->p, &principal->p, deltaT);
                 }else if(principal->p.categoria == '1' && aux->p.categoria == '2'){
                   colide(&principal->p, &aux->p, deltaT);

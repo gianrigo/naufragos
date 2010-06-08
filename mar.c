@@ -29,14 +29,14 @@
 #define R_ASIMOV 80
 #define R_CORAL 30
 
-int validaPos(fila naufragos, item it)
+int validaPos(fila naufragos, item *it)
 {
   fila aux;
 
   aux = naufragos;
 
   while(aux != NULL){
-    if((aux->p.raio + it.raio) >= distancia(aux->p.pos, it.pos)) return 0;
+    if((aux->p.raio + it->raio) >= distancia(aux->p.pos, it->pos)){ if(it != &aux->p) return 0;}
     aux = aux->prox;
   }
 
@@ -61,13 +61,13 @@ fila atualizaMar(fila naufragos, int l_max, int c_max, double deltaT)
         proximo->p.atualizada = 1;
 					/*Se for 0 eh o topo. 1 eh o chao. 2 eh a parede esquerda e 3 eh a parede direita.*/
 					if( (proximo->p.pos.y - proximo->p.raio) < 0)
-						colideComBorda(&proximo->p, 0, 768, 1024);				
+						colideComBorda(naufragos, &proximo->p, 0, 768, 1024);				
 					else if( (proximo->p.pos.y + proximo->p.raio) > l_max)
-						colideComBorda(&proximo->p, 1, 768, 1024);
+						colideComBorda(naufragos, &proximo->p, 1, 768, 1024);
 					else if( (proximo->p.pos.x - proximo->p.raio) < 0)
-						colideComBorda(&proximo->p, 2, 768, 1024);
+						colideComBorda(naufragos, &proximo->p, 2, 768, 1024);
 					else if( (proximo->p.pos.x + proximo->p.raio) > c_max )
-						colideComBorda(&proximo->p, 3, 768, 1024);		
+						colideComBorda(naufragos, &proximo->p, 3, 768, 1024);		
 			}
 			proximo = proximo -> prox;
 		}
@@ -135,7 +135,7 @@ fila geraPessoas(fila naufragos, int numPessoas, int l_max, int c_max)
 			p.raio = R_PESS;
 			p.categoria = 'p';
 
-			if(validaPos(naufragos, p)) naufragos = entra(naufragos, p);
+			if(validaPos(naufragos, &p)) naufragos = entra(naufragos, p);
       else cont--;
 	}
 
@@ -154,7 +154,7 @@ fila geraAsimov(fila naufragos, int l_max, int c_max)
 	asimov.raio = R_ASIMOV;
 	asimov.categoria = 'a';
 
-  while(!validaPos(naufragos, asimov)){
+  while(!validaPos(naufragos, &asimov)){
 	  asimov.pos.x = rand()%c_max;
 	  asimov.pos.y = rand()%l_max;
   }
@@ -190,7 +190,7 @@ fila geraRecifes(fila naufragos, int numRecifes, int l_max, int c_max)
 		else			 /* RECIFES GRANDES */
 			r.raio = raioMedio + rand()%raioMedio;/* No maximo será do dobro do tamanho do medio */
 								    
-		if(validaPos(naufragos, r)) naufragos = entra(naufragos, r);
+		if(validaPos(naufragos, &r)) naufragos = entra(naufragos, r);
     else cont--;
 	}
 	return naufragos;

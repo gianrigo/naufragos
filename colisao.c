@@ -355,10 +355,10 @@ void colide(item *p1, item *p2, double deltaT)
   
 }
 
-void colideComBorda( item *p, int borda, int l_max, int c_max)
+void colideComBorda( fila naufragos, item *p, int borda, int l_max, int c_max)
 {
  int novaBorda;
-
+ item aux;
  /* 0  -- borda superior
     1  -- borda inferior
     2  -- borda esquerda
@@ -368,26 +368,36 @@ void colideComBorda( item *p, int borda, int l_max, int c_max)
 	if( p->categoria == 'p')
 	{
 		/* Sorteia uma borda ate que ela seja diferente da atual */
-		while( (novaBorda = rand()%4) == borda);
+		
 
-		switch(novaBorda)
+		while( 1 )
 		{
-			case 0:
+			while( (novaBorda = rand()%4 ) == borda);
+
+			if( novaBorda == 0 )
+			{
 				p->pos.x = p->raio + 20;
 				p->pos.y = rand()%l_max;
-				break;
-			case 1:
+			}
+			else if( novaBorda == 1 )
+			{
 				p->pos.x = c_max - p->raio - 20;
 				p->pos.y = rand()%l_max;
-				break;
-			case 2:
+			}
+			else if( novaBorda == 2 )
+			{
 				p->pos.x = rand()%c_max;
 				p->pos.y = p->raio + 20;
-				break;
-			case 3:
+			}
+			else if( novaBorda == 3 )
+			{
 				p->pos.x = rand()%c_max;
 				p->pos.y = l_max - p->raio - 20;
-				break;
+			}
+			
+			if(validaPos(naufragos, p)){
+				break;}
+			
 		}
 	}
 

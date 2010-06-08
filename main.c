@@ -38,14 +38,10 @@ int main(int argc, char *argv[])
 
 	set_palette(desktop_palette);
 
-  naufragos = geraAsimov(naufragos, 768, 1024);
-  printf("4\n");
-	naufragos = geraPessoas(naufragos, 20, 768, 1024);
-  printf("1\n");
-	naufragos = geraRecifes(naufragos, 10, 768, 1024);
-  printf("2\n");
+	naufragos = geraAsimov(naufragos, 768, 1024);
+	naufragos = geraPessoas(naufragos, 200, 768, 1024);
+	naufragos = geraRecifes(naufragos, 40, 768, 1024);
 	naufragos = geraBotes(naufragos, 768, 1024);
-  printf("3\n");
 	
         
         inicio = clock();

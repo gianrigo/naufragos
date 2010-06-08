@@ -27,7 +27,21 @@
 #define R_PESS 5
 #define R_BOTE 21
 #define R_ASIMOV 80
+#define R_CORAL 30
 
+int validaPos(fila naufragos, item it)
+{
+  fila aux;
+
+  aux = naufragos;
+
+  while(aux != NULL){
+    if((aux->p.raio + it.raio) >= distancia(aux->p.pos, it.pos)) return 0;
+    aux = aux->prox;
+  }
+
+  return 1;
+}
 
 fila atualizaMar(fila naufragos, int l_max, int c_max, double deltaT)
 {
@@ -64,7 +78,6 @@ void imprimeMar(fila naufragos)
 {
 	fila proximo;
 	BITMAP *buffer;
-	double ang;
 
 	buffer = create_bitmap(screen->w, screen->h);
   
@@ -81,20 +94,18 @@ void imprimeMar(fila naufragos)
 		}
 		else if( proximo->p.categoria == 'a')
 		{
-			rectfill(buffer, (proximo->p.pos.x)-100, (proximo->p.pos.y)+50, (proximo->p.pos.x)+100, (proximo->p.pos.y) - 50, VERDE);
+			rectfill(buffer, (proximo->p.pos.x)-80, (proximo->p.pos.y)+60, (proximo->p.pos.x)+80, (proximo->p.pos.y) - 60, VERDE);
 			COLISAO	
 		}
 		else if( proximo->p.categoria == '1' )
 		{
-			ang = atan2(proximo->p.vel.y,proximo->p.vel.x);
-
-			triangle(buffer, (proximo->p.pos.x-15), (proximo->p.pos.y-17), (proximo->p.pos.x)/*+proximo->p.raio*cos(ang)*/, (proximo->p.pos.y+17)/*+proximo->p.raio*sin(ang)*/, (proximo->p.pos.x+15), (proximo->p.pos.y-17),LARANJA);/* Tentativas de rotacionar o bote */
+			triangle(buffer, (proximo->p.pos.x-15), (proximo->p.pos.y-17), (proximo->p.pos.x)/*+proximo->p.raio*cos(ang)*/, (proximo->p.pos.y+20)/*+proximo->p.raio*sin(ang)*/, (proximo->p.pos.x+15), (proximo->p.pos.y-17),LARANJA);/* Tentativas de rotacionar o bote */
 			COLISAO		
 		}
 
 		else if( proximo->p.categoria == '2' )
 		{
-			triangle(buffer, (proximo->p.pos.x)-15, (proximo->p.pos.y)-17, (proximo->p.pos.x), (proximo->p.pos.y)+17, (proximo->p.pos.x)+15, (proximo->p.pos.y)-17,BRANCO);/*risco de seg fault*/
+			triangle(buffer, (proximo->p.pos.x)-15, (proximo->p.pos.y)-17, (proximo->p.pos.x), (proximo->p.pos.y)+20, (proximo->p.pos.x)+15, (proximo->p.pos.y)-17,BRANCO);/*risco de seg fault*/
 			COLISAO			
 		}
 	}
@@ -124,7 +135,8 @@ fila geraPessoas(fila naufragos, int numPessoas, int l_max, int c_max)
 			p.raio = R_PESS;
 			p.categoria = 'p';
 
-			naufragos = entra(naufragos, p);
+			if(validaPos(naufragos, p)) naufragos = entra(naufragos, p);
+      else cont--;
 	}
 
 	return naufragos;
@@ -141,6 +153,11 @@ fila geraAsimov(fila naufragos, int l_max, int c_max)
 	asimov.atualizada = 0;
 	asimov.raio = R_ASIMOV;
 	asimov.categoria = 'a';
+
+  while(!validaPos(naufragos, asimov)){
+	  asimov.pos.x = rand()%c_max;
+	  asimov.pos.y = rand()%l_max;
+  }
 
 	naufragos = entra(naufragos, asimov);
 
@@ -172,11 +189,10 @@ fila geraRecifes(fila naufragos, int numRecifes, int l_max, int c_max)
 			while( (r.raio = rand()%raioMedio) < 5 ); /* Garante que o raio não sera 0 ou muito pequeno */
 		else			 /* RECIFES GRANDES */
 			r.raio = raioMedio + rand()%raioMedio;/* No maximo será do dobro do tamanho do medio */
-								
-
-		naufragos = entra(naufragos, r);
+								    
+		if(validaPos(naufragos, r)) naufragos = entra(naufragos, r);
+    else cont--;
 	}
-	
 	return naufragos;
 }
 
@@ -184,17 +200,17 @@ fila geraBotes(fila naufragos, int l_max, int c_max)
 {
 	item b1,b2;
 
-	boteBorda(&b1,l_max,c_max);
 	b1.atualizada = 0;
 	b1.raio = R_BOTE;
 	b1.categoria = '1';
+  boteBorda(&b1,l_max,c_max);
 
 	naufragos = entra(naufragos, b1);
 
-	boteBorda(&b2,l_max,c_max);
 	b2.atualizada = 0;
 	b2.raio = R_BOTE;
 	b2.categoria = '2';
+  boteBorda(&b2,l_max,c_max);
 
 	naufragos = entra(naufragos, b2);
 

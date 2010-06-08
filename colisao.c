@@ -6,13 +6,6 @@
 #include <stdio.h>
 #include <math.h>
 
-double distancia(vetor pos1, vetor pos2)
-{
-
-	return sqrt((pos1.x - pos2.x)*(pos1.x - pos2.x) + (pos1.y - pos2.y)*(pos1.y - pos2.y));
-
-}
-
 fila detectaColisao(fila pessoas, double deltaT)
 {
 	fila principal, aux;
@@ -42,14 +35,14 @@ fila detectaColisao(fila pessoas, double deltaT)
                   colideCoral(aux->p, &principal->p, deltaT);
                 }
 		else if((principal->p.categoria == '1' || principal->p.categoria == '2') && (aux->p.categoria == 'a')){
-                  colideCoral(aux->p, &principal->p, deltaT);
+                  colideEsfera(aux->p, &principal->p, deltaT);
                 }else if(principal->p.categoria == '1' && aux->p.categoria == '2'){
                   colide(&principal->p, &aux->p, deltaT);
                   principal->p.atualizada = aux->p.atualizada = 0;
                 }else if((principal->p.categoria == '1' || principal->p.categoria == '2') && aux->p.categoria == 'p'){
                   pessoas = aux = principal = recolhePessoa(pessoas, aux);
                 }else if((principal->p.categoria == 'r' || principal->p.categoria == 'a') && aux->p.categoria == 'p'){
-                  colideCoral(principal->p, &aux->p, deltaT);
+                  colideEsfera(principal->p, &aux->p, deltaT);
                 }else if(principal->p.categoria == 'p' && aux->p.categoria == 'p'){
 					        colide(&principal->p, &aux->p, deltaT);
                 }
@@ -135,6 +128,99 @@ void movePessoa(item *p, double deltaT)
       		p->pos.y += (int) vel*sin(M_PI/4)*(-1)*deltaT;
       		break;
   	}
+}
+
+void colideEsfera(item estatico, item *movel, double deltaT){
+  movel->vel.x *= -1;
+  movel->vel.y *= -1;
+
+  movePessoa(movel, deltaT);
+  movel->atualizada = 1;
+}
+
+void colideEstatico(item estatico, item *movel, double deltaT){
+  int dir;
+  item aux;
+
+  aux.raio = movel->raio;
+  aux.pos.x = movel->pos.x;
+  aux.pos.y = movel->pos.y;
+  aux.vel.x = movel->vel.x;
+  aux.vel.y = movel->vel.y;
+
+  dir = direcao(aux.vel.x, aux.vel.y);
+
+  switch(dir){
+    /*casos bons!*/
+    case N:
+      movel->vel.y *= -1;
+      movel->pos.y -= movel->raio;
+      if(movel->pos.x - estatico.pos.x > 0)
+        movel->pos.x += movel->raio;
+      else
+        movel->pos.x -= movel->raio; 
+      break;
+    case S:
+      movel->vel.y *= -1;
+      movel->pos.y += movel->raio;
+      if(movel->pos.x - estatico.pos.x > 0)
+        movel->pos.x += movel->raio;
+      else
+        movel->pos.x -= movel->raio;
+      break;
+    case L:
+      movel->vel.x *= -1;
+      movel->pos.x -= movel->raio;
+      if(movel->pos.y - estatico.pos.y > 0)
+        movel->pos.y += movel->raio;
+      else
+        movel->pos.y -= movel->raio;
+      break;
+    case O:
+      movel->vel.x *= -1;
+      movel->pos.x += movel->raio;
+      if(movel->pos.y - estatico.pos.y > 0)
+        movel->pos.y += movel->raio;
+      else
+        movel->pos.y -= movel->raio;
+      break;
+    /*casos ruins!*/
+    default:
+      /*printf("\nDefault");*/
+      aux.vel.y *= -1;
+      movePessoa(&aux, deltaT);
+      if(distancia(aux.pos, estatico.pos) < (aux.raio + estatico.raio)){
+        aux.raio = movel->raio;
+        aux.pos.x = movel->pos.x;
+        aux.pos.y = movel->pos.y;
+        aux.vel.x = movel->vel.x;
+        aux.vel.y = movel->vel.y;
+        
+        if(aux.vel.x > 0){
+          aux.pos.x += aux.raio;
+        }else{
+          aux.pos.x -= aux.raio;
+        }
+        if(aux.pos.x > 0){
+          aux.pos.y += aux.raio;
+        }else{
+          aux.pos.y -= aux.raio;
+        }
+        aux.vel.x *= -1;
+        /*while(distancia(aux.pos, estatico.pos) < (aux.raio + estatico.raio)) movePessoa(&aux, deltaT);*/ 
+      }
+      break;
+  }
+
+  while(distancia(aux.pos, estatico.pos) < (aux.raio + estatico.raio)) movePessoa(&aux, deltaT);
+
+  movel->raio = aux.raio;
+  movel->pos.x = aux.pos.x;
+  movel->pos.y = aux.pos.y;
+  movel->vel.x = aux.vel.x;
+  movel->vel.y = aux.vel.y;
+
+  movel->atualizada=1;
 }
 
 void colideCoral(item coral, item *p, double deltaT){
@@ -245,7 +331,7 @@ void colideCoral(item coral, item *p, double deltaT){
       }
       break;
   }
-  movePessoa(p, deltaT);
+  while(distancia(p->pos, coral.pos) < (p->raio + coral.raio)) movePessoa(p, deltaT);
   p->atualizada = 1;
 }
 

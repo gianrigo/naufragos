@@ -5,6 +5,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+double distancia(vetor pos1, vetor pos2)
+{
+
+	return sqrt((pos1.x - pos2.x)*(pos1.x - pos2.x) + (pos1.y - pos2.y)*(pos1.y - pos2.y));
+
+}
+
 double angulo(double x, double y){
   double ang;
 
